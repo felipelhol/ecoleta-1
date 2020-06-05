@@ -1,21 +1,6 @@
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import { errors } from 'celebrate';
+import App from './App';
 
-import routes from './routes';
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-app.use(routes);
-
-app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
-
-app.use(errors());
-
-app.listen(3333, () => {
+App.listen(process.env.APP_API_PORT || 3333, () => {
   // eslint-disable-next-line
-  console.log('🚀  Server started on port 3333!');
+   console.log('🚀  Server started on port 3333!');
 });
