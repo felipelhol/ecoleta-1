@@ -4,31 +4,30 @@ import {
   Column,
   UpdateDateColumn,
   CreateDateColumn,
-  OneToOne,
+  ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
-import { Exclude } from 'class-transformer';
 import Point from './Point';
+import Item from './Item';
 
-@Entity('users')
-class User {
+@Entity('point_items')
+class PointItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  email: string;
-
-  @Column()
   point_id: string;
 
-  @OneToOne(() => Point, point => point.user)
+  @ManyToOne(() => Point, point => point.point_items)
   @JoinColumn({ name: 'point_id' })
   point: Point;
 
   @Column()
-  @Exclude()
-  password: string;
+  item_id: string;
+
+  @ManyToOne(() => Item)
+  @JoinColumn({ name: 'item_id' })
+  item: Item;
 
   @CreateDateColumn()
   created_at: Date;
@@ -37,4 +36,4 @@ class User {
   updated_at: Date;
 }
 
-export default User;
+export default PointItem;

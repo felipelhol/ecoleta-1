@@ -25,6 +25,7 @@ export default class CreateUsers1591393363596 implements MigrationInterface {
           {
             name: 'point_id',
             type: 'uuid',
+            isNullable: true,
           },
           {
             name: 'created_at',

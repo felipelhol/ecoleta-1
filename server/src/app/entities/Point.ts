@@ -4,13 +4,21 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
+
+import User from './User';
+import PointItem from './PointItems';
 
 @Entity('points')
 class Point {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToOne(() => User, user => user.point, { cascade: ['update'] })
+  user: User;
 
   @Column()
   name: string;
@@ -40,6 +48,11 @@ class Point {
 
   @Column()
   longitude: number;
+
+  @OneToMany(() => PointItem, pointItem => pointItem.point, {
+    cascade: true,
+  })
+  point_items: PointItem[];
 
   @CreateDateColumn()
   created_at: Date;

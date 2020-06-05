@@ -6,9 +6,14 @@ import multerConfig from '../../config/multer';
 import PointsController from '../controllers/PointsController';
 import createPointValidator from '../validators/createPointValidator';
 
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import indexPointValidator from '../validators/indexPointValidator';
+
 const pointsRouter = Router();
 const pointsController = new PointsController();
 const upload = multer(multerConfig);
+
+pointsRouter.use(ensureAuthenticated);
 
 pointsRouter.post(
   '/',
@@ -17,7 +22,7 @@ pointsRouter.post(
   pointsController.create,
 );
 
-// pointsRouter.get('/points', pointsController.index);
+pointsRouter.get('/', indexPointValidator, pointsController.index);
 // pointsRouter.get('/points/:id', pointsController.show);
 
 // pointsRouter.post(
