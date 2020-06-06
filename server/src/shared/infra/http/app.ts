@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import 'dotenv/config';
 import { errors as celebrateErrors } from 'celebrate';
 import express, { Express } from 'express';
@@ -8,6 +9,7 @@ import path from 'path';
 import handleAppError from '@shared/infra/http/middlewares/handleAppError';
 import routes from '@shared/infra/http/routes';
 
+import '@shared/container';
 import '@shared/infra/typeorm';
 
 class App {
@@ -26,7 +28,9 @@ class App {
     this.server.use(express.json());
     this.server.use(
       '/uploads',
-      express.static(path.resolve(__dirname, '..', 'uploads')),
+      express.static(
+        path.resolve(__dirname, '..', '..', '..', '..', 'uploads'),
+      ),
     );
   }
 

@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 
-import User from './User';
+import User from '@modules/users/infra/typeorm/entities/User';
 import PointItem from './PointItems';
 
 @Entity('points')

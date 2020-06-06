@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import { Exclude } from 'class-transformer';
-import Point from './Point';
+import Point from '@modules/points/infra/typeorm/entities/Point';
 
 @Entity('users')
 class User {

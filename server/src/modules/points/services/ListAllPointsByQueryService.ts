@@ -1,6 +1,8 @@
-import { getRepository } from 'typeorm';
+import { injectable, inject } from 'tsyringe';
 
-import Point from '../entities/Point';
+import Point from '@modules/points/infra/typeorm/entities/Point';
+
+import IPointsRepository from '@modules/points/repositories/IPointsRepository';
 
 interface IRequest {
   city: string;
@@ -8,17 +10,23 @@ interface IRequest {
   items: string;
 }
 
+@injectable()
 class ListAllPointsByQueryService {
+  constructor(
+    @inject('PointsRepository')
+    private pointsRepository: IPointsRepository,
+  ) {}
+
   public async execute({ city, uf, items }: IRequest): Promise<Point[]> {
-    const pointsRepository = getRepository(Point);
+    const parsedItems = items.split(',').map(item => String(item.trim()));
 
-    const parsedItems = String(items)
-      .split(',')
-      .map(item => Number(item.trim()));
-
-    const points = await pointsRepository.find({
-      where: { city, uf },
+    const points = await this.pointsRepository.findByCityUfItems({
+      city,
+      uf,
+      items: parsedItems,
     });
+
+    return points;
   }
 }
 

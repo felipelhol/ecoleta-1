@@ -1,19 +1,16 @@
 import { Response, Request } from 'express';
-import knex from '../database/connection';
+import { classToClass } from 'class-transformer';
+import { container } from 'tsyringe';
+
+import ListAllItemsService from '@modules/items/services/ListAllItemsService';
 
 class ItemsController {
   async index(req: Request, res: Response): Promise<Response> {
-    const items = await knex('items').select('*');
+    const listAllItemsService = container.resolve(ListAllItemsService);
 
-    const serializedItems = items.map(item => {
-      return {
-        id: item.id,
-        title: item.title,
-        image_url: `http://192.168.0.123:3333/uploads/${item.image}`,
-      };
-    });
+    const items = await listAllItemsService.execute();
 
-    return res.json(serializedItems);
+    return res.json(classToClass(items));
   }
 }
 

@@ -7,8 +7,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+
+import Item from '@modules/items/infra/typeorm/entities/Item';
 import Point from './Point';
-import Item from './Item';
 
 @Entity('point_items')
 class PointItem {

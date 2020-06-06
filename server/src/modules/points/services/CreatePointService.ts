@@ -1,8 +1,10 @@
-import { getRepository } from 'typeorm';
+import { injectable, inject } from 'tsyringe';
 
-import Point from '../entities/Point';
-import AppError from '../errors/AppError';
-import User from '../entities/User';
+import IPointsRepository from '@modules/points/repositories/IPointsRepository';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+
+import Point from '@modules/points/infra/typeorm/entities/Point';
+import AppError from '@shared/errors/AppError';
 
 interface IRequest {
   user_id: string;
@@ -17,7 +19,16 @@ interface IRequest {
   items: string;
 }
 
+@injectable()
 class CreatePointService {
+  constructor(
+    @inject('PointsRepository')
+    private pointsRepository: IPointsRepository,
+
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
+  ) {}
+
   public async execute({
     user_id,
     name,
@@ -30,43 +41,42 @@ class CreatePointService {
     longitude,
     items,
   }: IRequest): Promise<Point> {
-    const pointsReposity = getRepository(Point);
-    const usersRepository = getRepository(User);
-
     const [findPointByEmail, findPointByWhatsApp] = await Promise.all([
-      pointsReposity.findOne({ where: { email } }),
-      pointsReposity.findOne({ where: { whatsapp } }),
+      this.pointsRepository.findByEmail(email),
+      this.pointsRepository.findByWhatsapp(whatsapp),
     ]);
 
     if (findPointByEmail || findPointByWhatsApp) {
       throw new AppError('Point already exists');
     }
 
-    const user = await usersRepository.findOne(user_id);
+    const user = await this.usersRepository.findById(user_id);
 
-    if (user?.point_id) {
+    if (!user) {
+      throw new AppError('User does not exists');
+    }
+
+    if (user.point_id) {
       throw new AppError('User already has a point');
     }
 
     const pointItems = items
       .split(',')
-      .map((item: string) => Number(item.trim()))
-      .map((item: number) => ({ item_id: item }));
+      .map((item: string) => item.trim())
+      .map((item: string) => ({ item_id: item }));
 
-    const point = pointsReposity.create({
-      name,
-      image,
-      email,
-      whatsapp,
+    const point = await this.pointsRepository.create({
+      user,
+      items: pointItems,
       city,
-      uf,
+      email,
+      image,
       latitude,
       longitude,
-      point_items: pointItems,
-      user,
+      name,
+      uf,
+      whatsapp,
     });
-
-    await pointsReposity.save(point);
 
     delete point.user;
 
