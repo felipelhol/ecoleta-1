@@ -1,4 +1,4 @@
-import App from './App';
+import App from './app';
 
 App.listen(process.env.APP_API_PORT || 3333, () => {
   // eslint-disable-next-line

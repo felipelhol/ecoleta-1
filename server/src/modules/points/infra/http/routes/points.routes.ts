@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import multer from 'multer';
 
-import multerConfig from '../../config/multer';
+import ensureAuthenticated from '@shared/infra/http/middlewares/handleAppError';
+import multerConfig from '@config/multer';
 
-import PointsController from '../controllers/PointsController';
-import createPointValidator from '../validators/createPointValidator';
+import PointsController from '@modules/points/infra/http/controllers/PointsController';
 
-import ensureAuthenticated from '../middlewares/ensureAuthenticated';
-import indexPointValidator from '../validators/indexPointValidator';
+import createPointValidator from '@modules/points/infra/http/validators/createPointValidator';
+import indexPointValidator from '@modules/points/infra/http/validators/indexPointValidator';
 
 const pointsRouter = Router();
 const pointsController = new PointsController();

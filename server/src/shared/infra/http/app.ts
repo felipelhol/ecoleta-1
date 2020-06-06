@@ -5,10 +5,10 @@ import cors from 'cors';
 import 'express-async-errors';
 import path from 'path';
 
-import routes from './app/routes';
+import handleAppError from '@shared/infra/http/middlewares/handleAppError';
+import routes from '@shared/infra/http/routes';
 
-import './database';
-import handleAppError from './handleAppError';
+import '@shared/infra/typeorm';
 
 class App {
   public server: Express;
